@@ -1,0 +1,4 @@
+id: code-review-env
+name: Code Review Environment
+description: AI agent environment for code review and bug fixing
+entry_point: app.py

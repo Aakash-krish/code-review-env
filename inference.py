@@ -1,16 +1,44 @@
+from openai import OpenAI
+import os
 import requests
+
+# Environment variables
+API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4.1-mini")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+# OpenAI client
+client = OpenAI(
+    base_url=API_BASE_URL,
+    api_key=HF_TOKEN
+)
 
 BASE_URL = "http://localhost:8000"
 
-# Reset environment
-task = requests.get(f"{BASE_URL}/reset").json()
-print("Task:", task)
+# START
+print("START")
 
-# Dummy fix (just returns expected for demo)
+task = requests.get(f"{BASE_URL}/reset").json()
+print(task)
+
+# STEP
+print("STEP")
+
+response = client.chat.completions.create(
+    model=MODEL_NAME,
+    messages=[
+        {"role": "user", "content": f"Fix this code:\n{task['buggy_code']}"}
+    ]
+)
+
 fix = {
-    "fixed_code": task["expected_fix"]
+    "fixed_code": response.choices[0].message.content
 }
 
-# Send to environment
+print(fix)
+
 result = requests.post(f"{BASE_URL}/step", json=fix).json()
-print("Result:", result)
+
+# END
+print("END")
+print(result)

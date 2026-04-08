@@ -1,3 +1,14 @@
+
+---
+title: Code Review Environment
+emoji: 🚀
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_file: app.py
+pinned: false
+---
+
 #  Code Review, Debugging & Optimization Environment
 
 ##  Problem Statement
