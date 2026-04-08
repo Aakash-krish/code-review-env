@@ -1,0 +1,10 @@
+[project]
+name = "code-review-env"
+version = "0.1.0"
+description = "AI Code Review Environment"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "openai"
+]
