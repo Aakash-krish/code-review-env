@@ -1,5 +1,3 @@
-import random
-
 tasks = [
     {
         "id": "easy_task",
@@ -21,5 +19,10 @@ tasks = [
     }
 ]
 
+task_index = 0
+
 def get_task():
-    return random.choice(tasks)
+    global task_index
+    task = tasks[task_index]
+    task_index = (task_index + 1) % len(tasks)
+    return task

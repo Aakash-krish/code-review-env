@@ -7,7 +7,12 @@ entry_point: server.app
 tasks:
   - id: easy_task
     description: Fix simple syntax error
+    grader: grader.grade
+
   - id: medium_task
     description: Fix logical bug
+    grader: grader.grade
+
   - id: hard_task
     description: Fix algorithmic bug
+    grader: grader.grade
