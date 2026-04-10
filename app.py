@@ -14,7 +14,12 @@ def home():
 def reset():
     global current_task
     current_task = get_task()
-    return current_task
+
+    return {
+        "task_id": current_task["id"],   # ✅ IMPORTANT
+        "level": current_task["level"],
+        "buggy_code": current_task["buggy_code"]
+    }
 
 @app.post("/step")
 def step(action: dict):
@@ -25,10 +30,10 @@ def step(action: dict):
 
     return {
         "score": score,
-        "done": True,  # ✅ always true
+        "done": True,
         "info": {
-            "task_id": current_task.get("id"),
-            "level": current_task.get("level")
+            "task_id": current_task["id"],   # ✅ IMPORTANT
+            "level": current_task["level"]
         }
     }
 

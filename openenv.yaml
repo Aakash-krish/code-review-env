@@ -6,13 +6,8 @@ entry_point: server.app
 
 tasks:
   - id: easy_task
-    name: Easy Code Fix
-    description: Fix simple syntax errors
-
+    description: Fix simple syntax error
   - id: medium_task
-    name: Medium Code Fix
-    description: Fix logical bugs in code
-
+    description: Fix logical bug
   - id: hard_task
-    name: Hard Code Fix
-    description: Fix complex algorithmic bugs
+    description: Fix algorithmic bug
