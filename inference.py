@@ -2,70 +2,51 @@ from openai import OpenAI
 import os
 import requests
 
-# Environment variables
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4.1-mini")
 HF_TOKEN = os.getenv("HF_TOKEN")
 
-# OpenAI client
 client = OpenAI(
     base_url=API_BASE_URL,
     api_key=HF_TOKEN
 )
 
-# ✅ Correct port (7860)
 BASE_URL = os.getenv("BASE_URL", "http://localhost:7860")
 
-# ---------------- START ----------------
-print("START")
-
+# -------- START --------
 try:
     task = requests.post(f"{BASE_URL}/reset").json()
-except Exception as e:
-    task = {"buggy_code": "print('hello world')"}  # fallback
+except:
+    task = {"buggy_code": "print('hello')"}
 
-print(task)
+print(f"[START] task=code_review", flush=True)
 
-# ---------------- STEP ----------------
-print("STEP")
-
+# -------- STEP --------
 buggy_code = task.get("buggy_code", "")
 
-prompt = f"""You are a code debugging assistant. Fix the following buggy Python code.
-Return ONLY the fixed code. No explanation.
+prompt = f"""Fix this Python code. Return only code.
 
-Buggy code:
 {buggy_code}
 """
 
 try:
     response = client.chat.completions.create(
         model=MODEL_NAME,
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
+        messages=[{"role": "user", "content": prompt}]
     )
-
     fixed_code = response.choices[0].message.content.strip()
-
-except Exception as e:
-    # ✅ fallback if API fails
+except:
     fixed_code = buggy_code
-
-# Remove markdown fences if any
-if fixed_code.startswith("```"):
-    lines = fixed_code.split("\n")
-    fixed_code = "\n".join(lines[1:-1]) if lines[-1].strip() == "```" else "\n".join(lines[1:])
 
 fix = {"fixed_code": fixed_code}
 
-print(fix)
-
-# ---------------- END ----------------
 try:
     result = requests.post(f"{BASE_URL}/step", json=fix).json()
-except Exception as e:
-    result = {"score": 0.0, "done": False}
+    score = result.get("score", 0.0)
+except:
+    score = 0.0
 
-print("END")
-print(result)
+print(f"[STEP] step=1 reward={score}", flush=True)
+
+# -------- END --------
+print(f"[END] task=code_review score={score} steps=1", flush=True)
