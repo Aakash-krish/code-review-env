@@ -1,4 +1,18 @@
 id: code-review-env
 name: Code Review Environment
 description: AI agent environment for code review and bug fixing
-entry_point: app.py
+
+entry_point: server.app
+
+tasks:
+  - id: easy_task
+    name: Easy Code Fix
+    description: Fix simple syntax errors
+
+  - id: medium_task
+    name: Medium Code Fix
+    description: Fix logical bugs in code
+
+  - id: hard_task
+    name: Hard Code Fix
+    description: Fix complex algorithmic bugs
