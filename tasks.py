@@ -1,5 +1,5 @@
 import random
-
+ 
 tasks = [
     {
         "id": "easy_task",
@@ -16,10 +16,30 @@ tasks = [
     {
         "id": "hard_task",
         "level": "hard",
-        "buggy_code": "def find_max(arr):\n    max = 0\n    for i in arr:\n        if i > max:\n            max = i\n    return max",
-        "expected_fix": "def find_max(arr):\n    max_val = arr[0]\n    for i in arr:\n        if i > max_val:\n            max_val = i\n    return max_val"
+        "buggy_code": (
+            "def find_max(arr):\n"
+            "    max = 0\n"
+            "    for i in arr:\n"
+            "        if i > max:\n"
+            "            max = i\n"
+            "    return max"
+        ),
+        "expected_fix": (
+            "def find_max(arr):\n"
+            "    max_val = arr[0]\n"
+            "    for i in arr:\n"
+            "        if i > max_val:\n"
+            "            max_val = i\n"
+            "    return max_val"
+        )
     }
 ]
-
+ 
 def get_task():
+    return random.choice(tasks)
+ 
+def get_task_by_id(task_id: str):
+    for task in tasks:
+        if task["id"] == task_id:
+            return task
     return random.choice(tasks)

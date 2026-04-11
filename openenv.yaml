@@ -1,18 +1,24 @@
 id: code-review-env
 name: Code Review Environment
 description: AI agent environment for code review and bug fixing
-
+ 
 entry_point: server.app
-
+ 
 tasks:
   - id: easy_task
-    description: Fix simple syntax error
-    grader: grader.grade
-
+    description: Fix simple syntax error in Python code
+    grader:
+      type: function
+      function: grader.grade
+ 
   - id: medium_task
-    description: Fix logical bug
-    grader: grader.grade
-
+    description: Fix logical bug in Python code
+    grader:
+      type: function
+      function: grader.grade
+ 
   - id: hard_task
-    description: Fix algorithmic bug
-    grader: grader.grade
+    description: Fix complex algorithmic bug in Python code
+    grader:
+      type: function
+      function: grader.grade
