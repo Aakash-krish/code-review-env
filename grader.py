@@ -1,13 +1,20 @@
 import ast
  
 def grade(task, user_fix):
+    if not task or not user_fix:
+        return 0.0
+ 
     expected = task["expected_fix"].strip()
     user_fix = user_fix.strip()
  
     # Strip markdown code fences if present
     if user_fix.startswith("```"):
         lines = user_fix.split("\n")
-        user_fix = "\n".join(lines[1:-1]) if lines[-1].strip() == "```" else "\n".join(lines[1:])
+        # Remove first line (```python or ```) and last line (```)
+        if lines[-1].strip() == "```":
+            user_fix = "\n".join(lines[1:-1])
+        else:
+            user_fix = "\n".join(lines[1:])
         user_fix = user_fix.strip()
  
     # 1. Exact match → full score
