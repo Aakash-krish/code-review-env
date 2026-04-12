@@ -1,10 +1,9 @@
 from fastapi import FastAPI
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import PlainTextResponse
 from tasks import get_task, get_task_by_id
 from tasks.easy_grader import grade as easy_grade
 from tasks.medium_grader import grade as medium_grade
 from tasks.hard_grader import grade as hard_grade
-import yaml
 import os
 
 app = FastAPI()
