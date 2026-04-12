@@ -1,8 +1,11 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse, PlainTextResponse
 from tasks import get_task, get_task_by_id
 from tasks.easy_grader import grade as easy_grade
 from tasks.medium_grader import grade as medium_grade
 from tasks.hard_grader import grade as hard_grade
+import yaml
+import os
 
 app = FastAPI()
 
@@ -13,6 +16,24 @@ GRADERS = {
 }
 
 current_task = None
+
+# ---------------------------------------------------------------
+# Serve openenv.yaml so the platform validator can read it
+# The validator does GET /openenv.yaml to count tasks with graders
+# ---------------------------------------------------------------
+OPENENV_YAML_PATH = os.path.join(os.path.dirname(__file__), "..", "openenv.yaml")
+
+@app.get("/openenv.yaml", response_class=PlainTextResponse)
+def serve_openenv_yaml():
+    with open(OPENENV_YAML_PATH, "r") as f:
+        return f.read()
+
+@app.get("/config", response_class=PlainTextResponse)
+def serve_config():
+    with open(OPENENV_YAML_PATH, "r") as f:
+        return f.read()
+
+# ---------------------------------------------------------------
 
 @app.get("/")
 def home():
