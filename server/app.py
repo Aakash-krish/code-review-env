@@ -16,24 +16,49 @@ GRADERS = {
 
 current_task = None
 
-# ---------------------------------------------------------------
-# Serve openenv.yaml so the platform validator can read it
-# The validator does GET /openenv.yaml to count tasks with graders
-# ---------------------------------------------------------------
 OPENENV_YAML_PATH = os.path.join(os.path.dirname(__file__), "..", "openenv.yaml")
 
+# ── /tasks ── The validator hits this to count tasks with graders ──────────
+@app.get("/tasks")
+def list_tasks():
+    return {
+        "tasks": [
+            {
+                "id": "easy_task",
+                "name": "Fix Syntax Error",
+                "difficulty": "easy",
+                "grader": "tasks.easy_grader:grade",
+                "description": "Fix a basic Python syntax error such as a missing bracket."
+            },
+            {
+                "id": "medium_task",
+                "name": "Fix Logic Error",
+                "difficulty": "medium",
+                "grader": "tasks.medium_grader:grade",
+                "description": "Fix a logical error such as a wrong return value."
+            },
+            {
+                "id": "hard_task",
+                "name": "Fix Complex Bug",
+                "difficulty": "hard",
+                "grader": "tasks.hard_grader:grade",
+                "description": "Fix a complex bug such as a shadowed builtin or edge case failure."
+            }
+        ]
+    }
+
+# ── /openenv.yaml ── serve raw config file ─────────────────────────────────
 @app.get("/openenv.yaml", response_class=PlainTextResponse)
 def serve_openenv_yaml():
     with open(OPENENV_YAML_PATH, "r") as f:
         return f.read()
 
-@app.get("/config", response_class=PlainTextResponse)
-def serve_config():
-    with open(OPENENV_YAML_PATH, "r") as f:
-        return f.read()
+# ── /health ─────────────────────────────────────────────────────────────────
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
-# ---------------------------------------------------------------
-
+# ── standard endpoints ───────────────────────────────────────────────────────
 @app.get("/")
 def home():
     return {"status": "running"}
