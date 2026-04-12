@@ -19,18 +19,18 @@ def grade(task, user_fix):
  
     # 1. Exact match → full score
     if user_fix == expected:
-        return 1.0
+        return 0.999
  
     # 2. Normalize whitespace and compare
     if " ".join(user_fix.split()) == " ".join(expected.split()):
-        return 1.0
+        return 0.999
  
     # 3. AST-based comparison (functionally equivalent code)
     try:
         expected_ast = ast.dump(ast.parse(expected))
         user_ast = ast.dump(ast.parse(user_fix))
         if expected_ast == user_ast:
-            return 1.0
+            return 0.999
     except SyntaxError:
         pass
  
@@ -46,4 +46,4 @@ def grade(task, user_fix):
     elif overlap >= 0.3:
         return 0.3
  
-    return 0.0
+    return 0.001

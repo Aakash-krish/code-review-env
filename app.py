@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 from tasks import get_task, get_task_by_id
 from grader import grade
+from tasks import easy_grader, medium_grader, hard_grader
  
 app = FastAPI()
+ 
+# Map task IDs to their specific grader modules
+GRADERS = {
+    "easy_task": easy_grader,
+    "medium_task": medium_grader,
+    "hard_task": hard_grader,
+}
  
 current_task = None
  
@@ -46,6 +54,22 @@ def step(action: dict):
             "task_id": current_task["id"],
             "level": current_task["level"]
         }
+    }
+ 
+@app.post("/grade/{task_id}")
+def grade_task(task_id: str, action: dict):
+    """Grade a specific task by ID using its dedicated grader module."""
+    grader_module = GRADERS.get(task_id)
+    if grader_module is None:
+        return {"error": f"Unknown task_id: {task_id}", "score": 0.001}
+ 
+    user_fix = action.get("fixed_code", "")
+    score = grader_module.grade(user_fix=user_fix)
+ 
+    return {
+        "task_id": task_id,
+        "score": score,
+        "done": True,
     }
  
 @app.get("/state")

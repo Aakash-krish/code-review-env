@@ -5,3 +5,22 @@ type: environment
 sdk: openenv
 description: AI agent environment for code review and bug fixing. Supports easy, medium, and hard Python debugging tasks.
 entrypoint: server.app:app
+
+tasks:
+  - id: "easy_task"
+    name: "Fix Syntax Error"
+    description: "Identify and fix a basic Python syntax error such as missing brackets or incorrect indentation."
+    difficulty: "easy"
+    grader: "tasks.easy_grader:grade"
+
+  - id: "medium_task"
+    name: "Fix Logic Error"
+    description: "Identify and fix a logical error in Python code, such as wrong conditions or incorrect return values."
+    difficulty: "medium"
+    grader: "tasks.medium_grader:grade"
+
+  - id: "hard_task"
+    name: "Fix Complex Bug"
+    description: "Fix deeper issues such as incorrect assumptions, edge case failures, or use of shadowed builtins."
+    difficulty: "hard"
+    grader: "tasks.hard_grader:grade"
