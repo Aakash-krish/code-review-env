@@ -55,13 +55,10 @@ async def mcp(request: Request):
 
 @app.get("/tasks")
 def list_tasks():
-    return {
-        "tasks": [
-            {"id": "easy_task",   "name": "Fix Syntax Error",  "difficulty": "easy",   "grader": "tasks.easy_grader:grade"},
-            {"id": "medium_task", "name": "Fix Logic Error",   "difficulty": "medium", "grader": "tasks.medium_grader:grade"},
-            {"id": "hard_task",   "name": "Fix Complex Bug",   "difficulty": "hard",   "grader": "tasks.hard_grader:grade"},
-        ]
-    }
+    import yaml
+    with open(OPENENV_YAML_PATH, "r") as f:
+        config = yaml.safe_load(f)
+    return {"tasks": config.get("tasks", [])}
 
 @app.get("/openenv.yaml", response_class=PlainTextResponse)
 def serve_openenv_yaml():
@@ -118,7 +115,13 @@ def grade_task(task_id: str, action: dict):
 
 @app.get("/state")
 def state():
-    return current_task
+    if current_task is None:
+        return {"error": "No active task"}
+    return {
+        "task_id": current_task["id"],
+        "level": current_task["level"],
+        "buggy_code": current_task["buggy_code"]
+    }
 
 def main():
     import uvicorn
