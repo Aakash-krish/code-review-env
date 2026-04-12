@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from tasks import get_task, get_task_by_id
 from tasks.easy_grader import grade as easy_grade
@@ -6,7 +6,7 @@ from tasks.medium_grader import grade as medium_grade
 from tasks.hard_grader import grade as hard_grade
 import os
 
-app = FastAPI()
+app = FastAPI(title="code-review-env", version="1.0.0")
 
 GRADERS = {
     "easy_task": easy_grade,
@@ -18,47 +18,58 @@ current_task = None
 
 OPENENV_YAML_PATH = os.path.join(os.path.dirname(__file__), "..", "openenv.yaml")
 
-# ── /tasks ── The validator hits this to count tasks with graders ──────────
+# ── Required by openenv validator ───────────────────────────────────────────
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
+@app.get("/metadata")
+def metadata():
+    return {
+        "name": "code-review-env",
+        "description": "AI agent environment for code review and bug fixing. Supports easy, medium, and hard Python debugging tasks.",
+        "version": "1.0.0"
+    }
+
+@app.get("/schema")
+def schema():
+    return {
+        "action": {"fixed_code": "string"},
+        "observation": {"buggy_code": "string", "task_id": "string", "level": "string"},
+        "state": {"task_id": "string", "level": "string", "buggy_code": "string"}
+    }
+
+@app.post("/mcp")
+async def mcp(request: Request):
+    body = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+    return {
+        "jsonrpc": "2.0",
+        "id": body.get("id", 1),
+        "result": {"tools": []}
+    }
+
 @app.get("/tasks")
 def list_tasks():
     return {
         "tasks": [
-            {
-                "id": "easy_task",
-                "name": "Fix Syntax Error",
-                "difficulty": "easy",
-                "grader": "tasks.easy_grader:grade",
-                "description": "Fix a basic Python syntax error such as a missing bracket."
-            },
-            {
-                "id": "medium_task",
-                "name": "Fix Logic Error",
-                "difficulty": "medium",
-                "grader": "tasks.medium_grader:grade",
-                "description": "Fix a logical error such as a wrong return value."
-            },
-            {
-                "id": "hard_task",
-                "name": "Fix Complex Bug",
-                "difficulty": "hard",
-                "grader": "tasks.hard_grader:grade",
-                "description": "Fix a complex bug such as a shadowed builtin or edge case failure."
-            }
+            {"id": "easy_task",   "name": "Fix Syntax Error",  "difficulty": "easy",   "grader": "tasks.easy_grader:grade"},
+            {"id": "medium_task", "name": "Fix Logic Error",   "difficulty": "medium", "grader": "tasks.medium_grader:grade"},
+            {"id": "hard_task",   "name": "Fix Complex Bug",   "difficulty": "hard",   "grader": "tasks.hard_grader:grade"},
         ]
     }
 
-# ── /openenv.yaml ── serve raw config file ─────────────────────────────────
 @app.get("/openenv.yaml", response_class=PlainTextResponse)
 def serve_openenv_yaml():
     with open(OPENENV_YAML_PATH, "r") as f:
         return f.read()
 
-# ── /health ─────────────────────────────────────────────────────────────────
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+# ── Standard endpoints ───────────────────────────────────────────────────────
 
-# ── standard endpoints ───────────────────────────────────────────────────────
 @app.get("/")
 def home():
     return {"status": "running"}
