@@ -4,8 +4,8 @@ title: Code Review Environment
 emoji: 🚀
 colorFrom: blue
 colorTo: green
-sdk: docker
-app_file: app.py
+sdk: openenv
+app_file: openenv.yaml
 pinned: false
 ---
 
