@@ -43,19 +43,28 @@ def _strip_code_fences(code: str) -> str:
     return code
 
 
-def grade(task: dict = None, user_fix: str = "") -> float:
+def grade(*args, **kwargs) -> float:
     """
     Grade the user's fix for the hard complex bug task.
-
-    Args:
-        task: Optional task dict. If None, uses the built-in TASK.
-        user_fix: The user's proposed fix as a string.
-
     Returns:
         A float score in [0.001, 0.999].
     """
-    if task is None:
-        task = TASK
+    task = TASK
+    user_fix = ""
+
+    # Attempt to extract user_fix flexibly
+    if "user_fix" in kwargs:
+        user_fix = kwargs["user_fix"]
+    elif "fixed_code" in kwargs:
+        user_fix = kwargs["fixed_code"]
+    elif args and isinstance(args[-1], str):
+        user_fix = args[-1]
+    
+    # Attempt to extract task flexibly if provided
+    if "task" in kwargs:
+        task = kwargs["task"]
+    elif args and isinstance(args[0], dict):
+        task = args[0]
 
     if not user_fix:
         return 0.001

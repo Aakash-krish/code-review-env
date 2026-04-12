@@ -1,10 +1,6 @@
-id: code-review-env
-name: Code Review Environment
-version: 1.0.0
-type: environment
-sdk: openenv
-description: AI agent environment for code review and bug fixing. Supports easy, medium, and hard Python debugging tasks.
-entrypoint: server.app:app
+version: "1.0"
+name: "code-review-env"
+description: "AI agent environment for code review and bug fixing. Supports easy, medium, and hard Python debugging tasks."
 
 tasks:
   - id: "easy_task"
